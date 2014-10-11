@@ -251,22 +251,27 @@ header {
  */
 
 
-input, select {
+button,
+input,
+select {
     color: #444;
     border: 0;
     border-radius: 3px;
     padding: 4px 6px;
     background-color: #F8F8F8;
     line-height: 1.4em;
+    margin: 0.2em 0;
 }
 
+button:focus,
 input:focus {
-    box-shadow: 0 0 2px 2px rgba(185, 103, 59, 0.8);
+    box-shadow: 0 0 2px 2px #7CA0B1;
+    margin: 0.2em;
 }
 
+button,
 input[type="submit"] {
-    background-color: #BF6C3F;
-    text-transform: uppercase;
+    background-color: #7CA0B1;
     color: white;
 }
 

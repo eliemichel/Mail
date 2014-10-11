@@ -1,0 +1,22 @@
+<div ng-controller="MessageListController">
+
+    <form ng-submit="getMails()">
+        <input type="text" ng-model="user" placeholder="User" />
+        <input type="password" ng-model="passwd" placeholder="Password" />
+        <input type="submit" value="Check mails" />
+    </form>
+
+    <div>
+        <div class="message" ng-repeat="msg in messages">
+            <div>
+                <button>Archive</button>
+                <form ng-submit="">
+                    <input type="text" ng-model="dir" placeholder="Directory" />
+                    <input type="submit" value="Move" />
+                </form>
+            </div>
+            <pre ng-repeat="part in msg">[[part]]</pre>
+        </div>
+    </div>
+
+</div>

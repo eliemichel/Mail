@@ -21,7 +21,15 @@ def get_mails(login, passwd):
     for num in data[0].split():
         typ, data = M.fetch(num, '(RFC822)')
         msg = email.message_from_bytes(data[0][1])
-        mails.append(msg)
+        texts = []
+        for part in msg.walk():
+            if part.get_content_type() == 'text/plain':
+                try:
+                    texts.append(part.get_payload(decode=True).decode())
+                except:
+                    pass#texts.append(part.get_payload(decode=False))
+                
+        mails.append(texts)
     M.close()
     M.logout()
     return mails
@@ -32,6 +40,17 @@ def get_mails(login, passwd):
 app = Bottle()
 session_manager = PickleSession()
 valid_user = authenticator(session_manager, login_url='/login')
+
+# ===
+# API
+# ===
+@app.route('/mails/<user>/<passwd>',
+           name="mails")
+def mails(user='', passwd=''):
+    """Get mails from user inbox"""
+    return {'mails': get_mails(user, passwd)}
+
+
 
 # ======
 # Routes
@@ -46,12 +65,9 @@ def static(filename):
 @app.route('/',
            name="index",
            template="index")
-@app.route('/mails/<user>/<passwd>',
-           name="mails",
-           template="index")
 def index(user='', passwd=''):
     """Index view"""
-    return {'mails': get_mails(user, passwd)}
+    return {}
 
 
 @app.route('/login',
@@ -71,11 +87,12 @@ def settings():
     return {}
 
 
+
 if __name__ == '__main__':
     # ===
     # App
     # ===
     SimpleTemplate.defaults["get_url"] = app.get_url
-    SimpleTemplate.defaults["API_URL"] = app.get_url("index")
+    SimpleTemplate.defaults["ROOT_URL"] = app.get_url("index")
     SimpleTemplate.defaults["valid_session"] = lambda: session_manager.get_session()['valid']
     run(app, host="0.0.0.0", port=8080, debug=True, reloader=True, server="cherrypy")
