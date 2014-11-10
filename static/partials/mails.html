@@ -1,11 +1,17 @@
-<div ng-controller="MessageListController">
+<div>
 
-    <form ng-submit="getMails()">
-        <input type="text" ng-model="user" placeholder="User" />
-        <input type="password" ng-model="passwd" placeholder="Password" />
-        <input type="submit" value="Check mails" />
-    </form>
-
+    <table>
+        <tr>
+            <th>From</th>
+            <th>To</th>
+            <th>Subject</th>
+        </tr>
+        <tr ng-repeat="msg in messages">
+            <td>[[msg.headers.From]]</td>
+            <td>[[msg.headers.To]]</td>
+            <td>[[msg.headers.Subject]]</td>
+        </tr>
+    </table>
     <div>
         <div class="message" ng-repeat="msg in messages">
             <div>
@@ -15,7 +21,7 @@
                     <input type="submit" value="Move" />
                 </form>
             </div>
-            <pre ng-repeat="part in msg">[[part]]</pre>
+            <pre ng-repeat="part in msg.texts">[[part]]</pre>
         </div>
     </div>
 

@@ -16,7 +16,6 @@
 
                 <nav class="header--menu horizontal-menu">
                     <a class="active" href="{{ get_url('index') }}">Home</a>
-                    <a href="{{ get_url('settings') }}">Settings</a>
                 </nav>
             </header>
 
@@ -24,10 +23,6 @@
 
         </div>
 
-        <script type="text/javascript">
-            // Constants set on the server side
-            var ROOT_URL = '{{ ROOT_URL }}';
-        </script>
         <script src="{{ get_url('static', filename='js/angular.min.js') }}"></script>
         <script src="{{ get_url('static', filename='js/angular-route.min.js') }}"></script>
         <script src="{{ get_url('static', filename='js/mailControllers.js') }}"></script>

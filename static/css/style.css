@@ -90,6 +90,17 @@ main {
     }
 }
 
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table td {
+    border: 1px solid #37515D;
+    padding: 0.5em;
+    text-align: center;
+}
+
 
 /******************************************************************************
  * 2. Dialog boxes
@@ -98,7 +109,7 @@ main {
 .dialog-err {
     background-color: rgba(255,255,255,0.1);
     border-left: 3px solid #cc624d;
-    
+
     margin: 10px 0;
     padding: 5px 10px;
 }
