@@ -19,7 +19,8 @@ angular
 		templateUrl: '/static/partials/mails.html',
 		controller: 'MessageListController',
         resolve: {load: ['imap', '$location', function (imap, $location) {
-            if (imap.server == '' || imap.user == '' || imap.password == '') {
+            var credentials = imap.getCredentials();
+            if (credentials.server == '' || credentials.user == '' || credentials.password == '') {
                 $location.path('/');
             }
         }]}

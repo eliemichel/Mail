@@ -1,4 +1,7 @@
 <div>
+    <p class="error">[[getError()]]</p>
+
+    <button ng-click="refresh()">Check mails</button>
 
     <table>
         <tr>
@@ -6,14 +9,14 @@
             <th>To</th>
             <th>Subject</th>
         </tr>
-        <tr ng-repeat="msg in messages">
+        <tr ng-repeat="msg in messages()">
             <td>[[msg.headers.From]]</td>
             <td>[[msg.headers.To]]</td>
             <td>[[msg.headers.Subject]]</td>
         </tr>
     </table>
     <div>
-        <div class="message" ng-repeat="msg in messages">
+        <div class="message" ng-repeat="msg in messages()">
             <div>
                 <button>Archive</button>
                 <form ng-submit="">

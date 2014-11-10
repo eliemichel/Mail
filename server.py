@@ -12,9 +12,9 @@ from bottle import redirect, request, run
 
 def get_mails(server, login, passwd):
     M = imaplib.IMAP4(server)
+    M.starttls()
+    M.login(login, passwd)
     try:
-        M.starttls()
-        M.login(login, passwd)
         M.select()
         _, data = M.uid('search', None, 'ALL')
         mails = []
@@ -30,7 +30,9 @@ def get_mails(server, login, passwd):
                                              errors='ignore'))
                     except UnicodeDecodeError:
                         pass
-            mails.append({'headers': dict(msg.items()),
+            mails.append({'headers': {i:
+                                      email.header.decode_header(j)[0][0]
+                                      for i,j in msg.items()},
                           'texts': texts})
     finally:
         M.close()
@@ -49,8 +51,10 @@ app = Bottle()
            name="mails")
 def mails(server='', user='', password=''):
     """Get mails from user inbox"""
-    return {'mails': get_mails(server, user, password)}
-
+    try:
+        return {'mails': get_mails(server, user, password)}
+    except imaplib.IMAP4.error:
+        abort(403, "Authentication failed.")
 
 
 # ======

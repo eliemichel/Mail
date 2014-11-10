@@ -2,49 +2,77 @@ angular
 
 .module('mailControllers', [])
 
-.factory('imap', ['$http', function ($http) {
-    var server = '';
-    var user = '';
-    var password = '';
+.value('Current', {
+    'credentials': {
+        'server': '',
+        'user': '',
+        'password': ''
+    },
+    'mails': [],
+    'error': ''
+})
 
-    var getEmails = function () {
-        if (this.server == '' || this.user == '' || this.password == '') {
-            return null;
-        }
-
-        return $http.get('mails/'+this.server+'/'+this.user+'/'+this.password);
+.factory('imap', ['$http', 'Current', function ($http, Current) {
+    var setCredentials = function (server, user, password) {
+        Current.credentials.server = server;
+        Current.credentials.user = user;
+        Current.credentials.password = password;
     };
+
+    var getCredentials = function () {
+        return Current.credentials;
+    }
 
     var reset = function () {
-        this.server = '';
-        this.user = '';
-        this.password = '';
+        Current.credentials.server = '';
+        Current.credentials.user = '';
+        Current.credentials.password = '';
     };
 
+    var refresh = function () {
+        if (Current.credentials.server == '' || Current.credentials.user == '' || Current.credentials.password == '') {
+            return;
+        }
+
+        $http.get('mails/'+Current.credentials.server+'/'+Current.credentials.user+'/'+Current.credentials.password)
+            .success(function(data) {
+                Current.mails = data.mails;
+            })
+            .error(function(err) {
+                Current.error = 'An error occured. Please check your credentials.';
+            });
+    };
+
+    var getMessages = function () {
+        return Current.mails;
+    };
+
+    var getError = function () {
+        return Current.error;
+    }
+
+
     return {
-        'server': server,
-        'user': user,
-        'password': password,
-        'getEmails': getEmails,
-        'reset': reset
+        // Credentials
+        'setCredentials': setCredentials,
+        'getCredentials': getCredentials,
+        'reset': reset,
+
+        // Emails list
+        'getMessages': getMessages,
+        'refresh': refresh,
+        'getError': getError
     };
 }])
 
 .controller('MessageListController', ['$scope', '$http', '$location', 'imap', function($scope, $http, $location, imap) {
-    var getEmailsPremise = imap.getEmails();
-    if (getEmailsPremise !== null) {
-        getEmailsPremise.success(function(data) {
-            $scope.messages = data.mails;
-        })
-        .error(function(err) {
-            alert('An error occured. Please check your credentials.');
-        });
-    }
+    $scope.messages = imap.getMessages;
+    $scope.refresh = imap.refresh;
+    $scope.getError = imap.getError;
 
 	$scope.setIMAP = function () {
-        imap.server = $scope.server;
-        imap.user = $scope.user;
-        imap.password = $scope.password;
+        imap.setCredentials($scope.server, $scope.user, $scope.password);
+        imap.refresh();
 
         $location.path('/home');
 	};
